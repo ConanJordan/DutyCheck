@@ -19,7 +19,6 @@ public class NoteTableDao implements QueryIF {
 	@Override
 	public List<NoteTableEntity> queryNoteTable(String cardNo, int year,
 			int month) throws SQLException {
-		// TODO Auto-generated method stub
 		
 		List<NoteTableEntity> resultList = new ArrayList<NoteTableEntity>();
 		
@@ -29,36 +28,44 @@ public class NoteTableDao implements QueryIF {
 		
 		conn = DataBaseFactory.CreateConnection();
 		
-		prst = conn.prepareStatement(Const.SQL_SELECT_NOTE_TABLE);
-		prst.setLong(1, Long.parseLong(cardNo));  // ÉèÖÃ¿¨ºÅ
-		
-		// ÉèÖÃ²éÑ¯ÔÂ·İ
-		Calendar calendar = Calendar.getInstance();
-		
-		calendar.set(Calendar.YEAR, year);  // ÉèÖÃÄê
-		
-		calendar.set(Calendar.MONTH, month + 1);  //ÉèÖÃÔÂ
-		calendar.set(Calendar.DAY_OF_MONTH, 1);  // ÉèÖÃÈÕ		
-		java.util.Date startDate = calendar.getTime();
-		java.sql.Date sqlStartDate = new java.sql.Date(startDate.getTime());  // ÉèÖÃ²éÑ¯ÔÂµÄ¿ªÊ¼ÈÕ
-		
-		calendar.set(Calendar.MONTH, month + 2);  //ÉèÖÃÔÂ
-		calendar.set(Calendar.DAY_OF_MONTH, 0);  // ÉèÖÃÈÕ		
-		java.util.Date endDate = calendar.getTime();
-		java.sql.Date sqlEndDate = new java.sql.Date(endDate.getTime());  // ÉèÖÃ²éÑ¯ÔÂµÄ½áÊøÈÕ
-		
-		prst.setDate(2, sqlStartDate);
-		prst.setDate(3, sqlEndDate);
-		
-		rs = prst.executeQuery();
-		
-		while (rs.next()) {
-			NoteTableEntity note = new NoteTableEntity();
-			note.setCardNo(rs.getLong(1));
-			note.setCti(rs.getString(2));
-			note.setIdt(rs.getDate(3));
+		try {
+			prst = conn.prepareStatement(Const.SQL_SELECT_NOTE_TABLE);
+			prst.setLong(1, Long.parseLong(cardNo));  // ï¿½ï¿½ï¿½Ã¿ï¿½ï¿½ï¿½
 			
-			resultList.add(note);
+			// ï¿½ï¿½ï¿½Ã²ï¿½Ñ¯ï¿½Â·ï¿½
+			Calendar calendar = Calendar.getInstance();
+			
+			calendar.set(Calendar.YEAR, year);  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+			
+			calendar.set(Calendar.MONTH, month + 1);  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+			calendar.set(Calendar.DAY_OF_MONTH, 1);  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½		
+			java.util.Date startDate = calendar.getTime();
+			java.sql.Date sqlStartDate = new java.sql.Date(startDate.getTime());  // ï¿½ï¿½ï¿½Ã²ï¿½Ñ¯ï¿½ÂµÄ¿ï¿½Ê¼ï¿½ï¿½
+			
+			calendar.set(Calendar.MONTH, month + 2);  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+			calendar.set(Calendar.DAY_OF_MONTH, 0);  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½		
+			java.util.Date endDate = calendar.getTime();
+			java.sql.Date sqlEndDate = new java.sql.Date(endDate.getTime());  // ï¿½ï¿½ï¿½Ã²ï¿½Ñ¯ï¿½ÂµÄ½ï¿½ï¿½ï¿½ï¿½ï¿½
+			
+			prst.setDate(2, sqlStartDate);
+			prst.setDate(3, sqlEndDate);
+			
+			rs = prst.executeQuery();
+			
+			while (rs.next()) {
+				NoteTableEntity note = new NoteTableEntity();
+				note.setCardNo(rs.getLong(1));
+				note.setCti(rs.getString(2));
+				note.setIdt(rs.getDate(3));
+				
+				resultList.add(note);
+			}
+		} catch (NumberFormatException e) {
+			throw e;
+		} catch (SQLException e) {
+			throw e;
+		} finally {
+			DataBaseFactory.close(conn, prst, rs);
 		}
 		
 		return null;

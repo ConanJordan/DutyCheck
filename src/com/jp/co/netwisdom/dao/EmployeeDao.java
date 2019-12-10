@@ -25,18 +25,24 @@ public class EmployeeDao implements QueryIF {
 		ResultSet rs = null;
 		
 		conn = DataBaseFactory.CreateConnection();
-		prst =conn.prepareStatement(Const.SQL_SELECT_ALL_EMPLYEES);
-		rs = prst.executeQuery();  // ִ�в�ѯ
-		
-		while (rs.next()) {
-			EmployeeEntity employee = new EmployeeEntity();
+		try {
+			prst =conn.prepareStatement(Const.SQL_SELECT_ALL_EMPLYEES);
+			rs = prst.executeQuery();  // ִ�в�ѯ
 			
-			employee.setId(rs.getString(1));  // ID
-			employee.setName(rs.getString(2));  // name
-			employee.setDept(rs.getString(3));  // dept
-			employee.setCardNo(rs.getString(4));  // cardNo
-			
-			resultList.add(employee);
+			while (rs.next()) {
+				EmployeeEntity employee = new EmployeeEntity();
+				
+				employee.setId(rs.getString(1));  // ID
+				employee.setName(rs.getString(2));  // name
+				employee.setDept(rs.getString(3));  // dept
+				employee.setCardNo(rs.getString(4));  // cardNo
+				
+				resultList.add(employee);
+			}
+		} catch (SQLException e) {
+			throw e;
+		} finally {
+			DataBaseFactory.close(conn, prst, rs);
 		}
 
 		return resultList;
