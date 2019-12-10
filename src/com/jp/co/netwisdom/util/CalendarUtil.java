@@ -3,6 +3,8 @@ package com.jp.co.netwisdom.util;
 import java.util.Calendar;
 import java.util.Date;
 
+import com.jp.co.netwisdom.config.Const;
+
 public class CalendarUtil {
 	
 	/**
@@ -130,6 +132,61 @@ public class CalendarUtil {
 		// 获得小时数
 		int hour = Integer.parseInt(time.substring(0, 2));
 		return hour < 19;  // 19点以前离开算早退
+	}
+	
+	/**
+	 * 祝日を判断する
+	 * @param year
+	 * @param month
+	 * @param date
+	 * @return
+	 */
+	public static boolean isHolliday (int year, int month, int date) {
+		
+		boolean result = false;
+		
+		Object[] holliday;  // 祝日
+		
+		for (int i = 0; i <= Const.HOLLIDAYS.length; i ++) {
+			holliday = Const.HOLLIDAYS[i];
+			if (holliday[1].equals(month)
+				&& holliday[2].equals(date)
+				&& (int)holliday[3] <= year
+				&& (int)holliday[4] >= year) {
+				result = true;
+				break;
+			}
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * 土日を判断する
+	 * @param year
+	 * @param month
+	 * @param date
+	 * @return
+	 */
+	public static boolean isWeekend (int year, int month, int date) {
+		boolean result = false;
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.YEAR, year);
+		calendar.set(Calendar.MONTH, month);
+		calendar.set(Calendar.DATE, date);
+		switch (calendar.get(Calendar.DAY_OF_WEEK)) {
+			case Calendar.MONDAY :
+			case Calendar.TUESDAY :
+			case Calendar.WEDNESDAY :
+			case Calendar.THURSDAY :
+			case Calendar.FRIDAY :
+				break;
+			case Calendar.SATURDAY :
+			case Calendar.SUNDAY :
+				result = true;
+				
+		}
+		return result;
 	}
 	
 }
