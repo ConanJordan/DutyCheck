@@ -5,6 +5,7 @@ public class DutyEntity {
 	private String name;
 	private double dutyTime;
 	private boolean isLate;
+	private boolean isEarly;
 	private boolean isAbsent;
 	private boolean isHoliday;
 	private boolean isException;
@@ -44,6 +45,12 @@ public class DutyEntity {
 	}
 	public void setHoliday(boolean isHoliday) {
 		this.isHoliday = isHoliday;
+	}
+	public boolean isEarly() {
+		return isEarly;
+	}
+	public void setEarly(boolean isEarly) {
+		this.isEarly = isEarly;
 	}
 
 }
