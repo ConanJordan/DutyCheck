@@ -1,5 +1,7 @@
 package com.jp.co.netwisdom.config;
 
+import com.jp.co.netwisdom.util.ReadUtil;
+
 public final class Const {
 	public static final String ADMINIST = "管理部";
 	public static final String BUSINESS = "营业";
@@ -9,6 +11,11 @@ public final class Const {
 	public static final String FEMALE = "女";
 	public static final String MARRIED = "已婚";
 	public static final String UNMARRIED = "未婚";
+	
+	public static final String JDBC_DRIVER = ReadUtil.getProperty("JDBC_DRIVER");
+	public static final String URL = ReadUtil.getProperty("URL");
+	public static final String USERNAME = ReadUtil.getProperty("USERNAME");
+	public static final String PASSWORD = ReadUtil.getProperty("PASSWORD");
 	
 	public static final String SQL_SELECT_ALL_EMPLYEES = ""
 			+ "SELECT ID, NAME, DETP, CARDNO "
