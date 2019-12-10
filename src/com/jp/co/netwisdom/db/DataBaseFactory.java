@@ -19,13 +19,14 @@ public class DataBaseFactory {
 		
 		try {
 			//prst = conn.prepareStatement(Const.SQL_SELECT_ALL_EMPLYEES);
-			prst = conn.prepareStatement("select id, name from MyTable");
+			prst = conn.prepareStatement(Const.SQL_SELECT_ALL_EMPLYEES);
 			rs = prst.executeQuery();
 			while (rs.next()) {
-				System.out.println(rs.getString(1));
-				/*System.out.println(rs.getString(2));
-				System.out.println(rs.getString(3));
-				System.out.println(rs.getString(4));*/
+				System.out.print(rs.getString(1) + " ");
+				System.out.print(rs.getString(2) + " ");
+				System.out.print(rs.getString(3) + " ");
+				System.out.print(rs.getString(4) + " ");
+				System.out.println();
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -46,9 +47,9 @@ public class DataBaseFactory {
 		
 		try {
 			Class.forName(Const.JDBC_DRIVER);
-			conn = DriverManager.getConnection("jdbc:sqlite:NetWisdom.db");
-			System.out.println("Opened database successfully");
-			System.out.println(conn);
+			conn = DriverManager.getConnection(Const.URL);
+			//System.out.println("Opened database successfully");
+			//System.out.println(conn);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
