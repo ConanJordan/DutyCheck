@@ -54,9 +54,9 @@ public class NoteTableDao implements QueryIF {
 			
 			while (rs.next()) {
 				NoteTableEntity note = new NoteTableEntity();
-				note.setCardNo(rs.getLong(1));
-				note.setCti(rs.getString(2));
-				note.setIdt(rs.getDate(3));
+				note.setCardNo(rs.getLong(1));  // 卡号
+				note.setCti(rs.getString(2));  // 打卡时间
+				note.setCdt(rs.getDate(3));  // 打卡日期
 				
 				resultList.add(note);
 			}

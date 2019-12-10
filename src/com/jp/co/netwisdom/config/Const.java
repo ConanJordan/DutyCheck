@@ -15,8 +15,12 @@ public final class Const {
 			+ "FROM EMPLOYEE";
 	
 	public static final String SQL_SELECT_NOTE_TABLE = ""
-			+ "SELECT CARDNO, CTI, IDT "
+			+ "SELECT CARDNO, CTI, CDT "
 			+ "FROM NOTETABLE "
 			+ "WHERE CARDNO = ? "
-			+ "AND IDT BETWEEN ? AND ?";
+			+ "AND CDT BETWEEN ? AND ?";
+	
+	public static final String PLEASE_INPUT_YEAR_MONTH = ""
+			+ "请输入想要查询的年月。格式为YYYYMM.";
+	
 }

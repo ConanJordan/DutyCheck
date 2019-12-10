@@ -7,7 +7,14 @@ public class DutyEntity {
 	private boolean isLate;
 	private boolean isAbsent;
 	private boolean isHoliday;
+	private boolean isException;
 	
+	public boolean isException() {
+		return isException;
+	}
+	public void setException(boolean isException) {
+		this.isException = isException;
+	}
 	public String getName() {
 		return name;
 	}
