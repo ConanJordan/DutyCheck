@@ -18,7 +18,6 @@ public class DataBaseFactory {
 		conn = CreateConnection();
 		
 		try {
-			//prst = conn.prepareStatement(Const.SQL_SELECT_ALL_EMPLYEES);
 			prst = conn.prepareStatement(Const.SQL_SELECT_ALL_EMPLYEES);
 			rs = prst.executeQuery();
 			while (rs.next()) {
@@ -29,7 +28,7 @@ public class DataBaseFactory {
 				System.out.println();
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 			
 		} finally {
@@ -48,10 +47,7 @@ public class DataBaseFactory {
 		try {
 			Class.forName(Const.JDBC_DRIVER);
 			conn = DriverManager.getConnection(Const.URL);
-			//System.out.println("Opened database successfully");
-			//System.out.println(conn);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return conn;
