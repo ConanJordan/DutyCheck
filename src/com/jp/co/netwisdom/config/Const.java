@@ -18,7 +18,7 @@ public final class Const {
 	public static final String PASSWORD = ReadUtil.getProperty("PASSWORD");
 	
 	public static final String SQL_SELECT_ALL_EMPLYEES = ""
-			+ "SELECT ID, NAME, DETP, CARDNO "
+			+ "SELECT ID, NAME, DEPT, CARDNO "
 			+ "FROM EMPLOYEE";
 	
 	public static final String SQL_SELECT_NOTE_TABLE = ""

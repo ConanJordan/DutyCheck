@@ -1,19 +1,59 @@
 package com.jp.co.netwisdom.db;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.jp.co.netwisdom.config.Const;
+
 public class DataBaseFactory {
 	
+	public static void main(String[] args) {
+		Connection conn = null;
+		PreparedStatement prst = null;
+		ResultSet rs = null;
+		
+		conn = CreateConnection();
+		
+		try {
+			//prst = conn.prepareStatement(Const.SQL_SELECT_ALL_EMPLYEES);
+			prst = conn.prepareStatement("select id, name from MyTable");
+			rs = prst.executeQuery();
+			while (rs.next()) {
+				System.out.println(rs.getString(1));
+				/*System.out.println(rs.getString(2));
+				System.out.println(rs.getString(3));
+				System.out.println(rs.getString(4));*/
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			
+		} finally {
+			DataBaseFactory.close(conn, prst, rs);
+		}
+	}
+	
 	/**
-	 * 获取数据库的链接
+	 * 鑾峰彇鏁版嵁搴撶殑閾炬帴
 	 * @return
 	 */
 	public static Connection CreateConnection() {
-		// TODO
-		return null;
+		
+		Connection conn = null;
+		
+		try {
+			Class.forName(Const.JDBC_DRIVER);
+			conn = DriverManager.getConnection("jdbc:sqlite:NetWisdom.db");
+			System.out.println("Opened database successfully");
+			System.out.println(conn);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return conn;
 	}
 	
 	public static void close (Connection conn, PreparedStatement prst, ResultSet rs) {
