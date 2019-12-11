@@ -23,12 +23,14 @@ public final class Const {
 	
 	public static final String SQL_SELECT_NOTE_TABLE = ""
 			+ "SELECT CARDNO, CTI, CDT "
-			+ "FROM NOTETABLE "
-			+ "WHERE CARDNO = ? "
-			+ "AND CDT BETWEEN ? AND ?";
+			+ "FROM NOTETABLE ";
 	
 	public static final String PLEASE_INPUT_YEAR_MONTH = ""
 			+ "请输入想要查询的年月。格式为YYYYMM.";
+	
+	public static final String YYYYMMDD_FORMAT = "yyyy-MM-dd";
+	
+	public static final String TIME_STAMP_FORMAT = "yyyyMMddHHmmSS";
 	
 	public static final Object[][] HOLLIDAYS = new Object[][]{
 		// 種別, 月, 日or週, 開始年, 終了年, 祝日名

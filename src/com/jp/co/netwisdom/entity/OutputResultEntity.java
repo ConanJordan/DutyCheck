@@ -30,4 +30,12 @@ public class OutputResultEntity {
 	public void setDuties(List<DutyEntity> duties) {
 		this.duties = duties;
 	}
+	
+	@Override
+	public String toString() {
+		return "OutputResultEntity [name=" + name + ", duties=" + duties
+				+ ", dutyStatis=" + dutyStatis + "]";
+	}
+	
+	
 }

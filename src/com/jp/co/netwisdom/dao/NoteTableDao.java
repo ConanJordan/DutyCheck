@@ -13,6 +13,7 @@ import com.jp.co.netwisdom.db.DataBaseFactory;
 import com.jp.co.netwisdom.entity.EmployeeEntity;
 import com.jp.co.netwisdom.entity.NoteTableEntity;
 import com.jp.co.netwisdom.interfaces.QueryIF;
+import com.jp.co.netwisdom.util.CalendarUtil;
 
 public class NoteTableDao implements QueryIF {
 
@@ -29,34 +30,28 @@ public class NoteTableDao implements QueryIF {
 		conn = DataBaseFactory.CreateConnection();
 		
 		try {
-			prst = conn.prepareStatement(Const.SQL_SELECT_NOTE_TABLE);
-			prst.setLong(1, Long.parseLong(cardNo));  // ï¿½ï¿½ï¿½Ã¿ï¿½ï¿½ï¿½
 			
-			// ï¿½ï¿½ï¿½Ã²ï¿½Ñ¯ï¿½Â·ï¿½
-			Calendar calendar = Calendar.getInstance();
+			StringBuilder sqlBuilder = new StringBuilder(Const.SQL_SELECT_NOTE_TABLE);
 			
-			calendar.set(Calendar.YEAR, year);  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+			// ±à¼­sqlÓï¾ä
+			sqlBuilder.append(" WHERE CARDNO = " + cardNo);  // CardNo
+			sqlBuilder.append(" AND CDT >= DATE('" + CalendarUtil.getFirstDay(year, month) + "')");  // ¸ÃÔÂµÚÒ»Ìì
+			sqlBuilder.append(" AND CDT <= DATE('" + CalendarUtil.getLastDay(year, month) + "')");  // ¸ÃÔÂ×îºóÒ»Ìì
 			
-			calendar.set(Calendar.MONTH, month + 1);  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-			calendar.set(Calendar.DAY_OF_MONTH, 1);  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½		
-			java.util.Date startDate = calendar.getTime();
-			java.sql.Date sqlStartDate = new java.sql.Date(startDate.getTime());  // ï¿½ï¿½ï¿½Ã²ï¿½Ñ¯ï¿½ÂµÄ¿ï¿½Ê¼ï¿½ï¿½
-			
-			calendar.set(Calendar.MONTH, month + 2);  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-			calendar.set(Calendar.DAY_OF_MONTH, 0);  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½		
-			java.util.Date endDate = calendar.getTime();
-			java.sql.Date sqlEndDate = new java.sql.Date(endDate.getTime());  // ï¿½ï¿½ï¿½Ã²ï¿½Ñ¯ï¿½ÂµÄ½ï¿½ï¿½ï¿½ï¿½ï¿½
-			
-			prst.setDate(2, sqlStartDate);
-			prst.setDate(3, sqlEndDate);
+			prst = conn.prepareStatement(sqlBuilder.toString());
 			
 			rs = prst.executeQuery();
 			
 			while (rs.next()) {
 				NoteTableEntity note = new NoteTableEntity();
-				note.setCardNo(rs.getLong(1));  // ¿¨ºÅ
-				note.setCti(rs.getString(2));  // ´ò¿¨Ê±¼ä
-				note.setCdt(rs.getDate(3));  // ´ò¿¨ÈÕÆÚ
+				note.setCardNo(rs.getLong(1));
+				note.setCti(rs.getString(2));
+				note.setCdt(
+						new java.sql.Date(
+						CalendarUtil.strToDate(rs.getString(3), Const.YYYYMMDD_FORMAT).getTime()		
+						));
+				
+				//note.setCdt(rs.getDate(3));
 				
 				resultList.add(note);
 			}
@@ -68,7 +63,7 @@ public class NoteTableDao implements QueryIF {
 			DataBaseFactory.close(conn, prst, rs);
 		}
 		
-		return null;
+		return resultList;
 	}
 
 	@Override
