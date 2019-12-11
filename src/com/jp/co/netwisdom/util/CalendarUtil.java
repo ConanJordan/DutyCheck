@@ -1,5 +1,7 @@
 package com.jp.co.netwisdom.util;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -76,12 +78,12 @@ public class CalendarUtil {
 		// 获得第一次打开时间的时分秒
 		int startHour = Integer.parseInt(start.substring(0, 2));
 		int startMinute = Integer.parseInt(start.substring(3, 5));
-		int startSecond = Integer.parseInt(start.substring(6));
+		int startSecond = Integer.parseInt(start.substring(6, 8));
 		
 		// 获得最后一次打卡时间的时分秒
 		int endHour = Integer.parseInt(end.substring(0, 2));
 		int endMinute = Integer.parseInt(end.substring(3, 5));
-		int endSecond = Integer.parseInt(end.substring(6));
+		int endSecond = Integer.parseInt(end.substring(6, 8));
 		
 		Date today = new Date();
 		
@@ -187,6 +189,82 @@ public class CalendarUtil {
 				
 		}
 		return result;
+	}
+	
+	/**
+	 * 根据年和月返回该月第一天的字符串
+	 * 格式：YYYY-MM-DD
+	 * @param year
+	 * @param month
+	 * @return
+	 */
+	public static String getFirstDay (int year, int month) {
+		
+		StringBuilder result = new StringBuilder("");
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.YEAR, year);  // 设置年
+		calendar.set(Calendar.MONTH, month - 1);  // 设置月
+		
+		result.append(calendar.get(Calendar.YEAR));
+		result.append("-");
+		result.append(
+				calendar.get(Calendar.MONTH) >= 9 ?
+				(calendar.get(Calendar.MONTH) + 1) :
+				"0" + (calendar.get(Calendar.MONTH) + 1)
+				);
+		result.append("-");
+		result.append("01");
+		
+		return result.toString();  // 返回结果字符串
+	}
+	
+	/**
+	 * 根据年和月返回该月最后一天的字符串
+	 * 格式：YYYY-MM-DD
+	 * @param year
+	 * @param month
+	 * @return
+	 */
+	public static String getLastDay (int year, int month) {
+		
+		StringBuilder result = new StringBuilder("");
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.YEAR, year);  // 设置年
+		calendar.set(Calendar.MONTH, month);  // 设置月
+		calendar.set(Calendar.DATE, 0);  // 设置日
+		
+		result.append(calendar.get(Calendar.YEAR));
+		result.append("-");
+		result.append(
+				calendar.get(Calendar.MONTH) >= 9 ?
+				(calendar.get(Calendar.MONTH) + 1) :
+				"0" + (calendar.get(Calendar.MONTH) + 1)
+				);
+		result.append("-");
+		result.append(calendar.get(Calendar.DATE));
+		
+		return result.toString();  // 返回结果字符串
+	}
+	
+	/**
+	 * 根据日期格式的字符串和格式类型返回日期对象
+	 * @param strDate
+	 * @param format
+	 * @return
+	 */
+	public static Date strToDate (String strDate, String format) {
+		SimpleDateFormat sdf = new SimpleDateFormat(format);
+		Date date = null;
+		try {
+			date = sdf.parse(strDate);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return date;
 	}
 	
 }

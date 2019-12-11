@@ -13,6 +13,7 @@ import com.jp.co.netwisdom.db.DataBaseFactory;
 import com.jp.co.netwisdom.entity.EmployeeEntity;
 import com.jp.co.netwisdom.entity.NoteTableEntity;
 import com.jp.co.netwisdom.interfaces.QueryIF;
+import com.jp.co.netwisdom.util.CalendarUtil;
 
 public class NoteTableDao implements QueryIF {
 
@@ -29,26 +30,15 @@ public class NoteTableDao implements QueryIF {
 		conn = DataBaseFactory.CreateConnection();
 		
 		try {
-			prst = conn.prepareStatement(Const.SQL_SELECT_NOTE_TABLE);
-			prst.setLong(1, Long.parseLong(cardNo));
 			
+			StringBuilder sqlBuilder = new StringBuilder(Const.SQL_SELECT_NOTE_TABLE);
 			
-			Calendar calendar = Calendar.getInstance();
+			// 编辑sql语句
+			sqlBuilder.append(" WHERE CARDNO = " + cardNo);  // CardNo
+			sqlBuilder.append(" AND CDT >= DATE('" + CalendarUtil.getFirstDay(year, month) + "')");  // 该月第一天
+			sqlBuilder.append(" AND CDT <= DATE('" + CalendarUtil.getLastDay(year, month) + "')");  // 该月最后一天
 			
-			calendar.set(Calendar.YEAR, year);
-			
-			calendar.set(Calendar.MONTH, month + 1);
-			calendar.set(Calendar.DAY_OF_MONTH, 1);
-			java.util.Date startDate = calendar.getTime();
-			java.sql.Date sqlStartDate = new java.sql.Date(startDate.getTime());
-			
-			calendar.set(Calendar.MONTH, month + 2);
-			calendar.set(Calendar.DAY_OF_MONTH, 0);
-			java.util.Date endDate = calendar.getTime();
-			java.sql.Date sqlEndDate = new java.sql.Date(endDate.getTime());
-			
-			prst.setDate(2, sqlStartDate);
-			prst.setDate(3, sqlEndDate);
+			prst = conn.prepareStatement(sqlBuilder.toString());
 			
 			rs = prst.executeQuery();
 			
@@ -56,7 +46,12 @@ public class NoteTableDao implements QueryIF {
 				NoteTableEntity note = new NoteTableEntity();
 				note.setCardNo(rs.getLong(1));
 				note.setCti(rs.getString(2));
-				note.setCdt(rs.getDate(3));
+				note.setCdt(
+						new java.sql.Date(
+						CalendarUtil.strToDate(rs.getString(3), Const.YYYYMMDD_FORMAT).getTime()		
+						));
+				
+				//note.setCdt(rs.getDate(3));
 				
 				resultList.add(note);
 			}
@@ -68,7 +63,7 @@ public class NoteTableDao implements QueryIF {
 			DataBaseFactory.close(conn, prst, rs);
 		}
 		
-		return null;
+		return resultList;
 	}
 
 	@Override

@@ -24,7 +24,6 @@ public class MainConsole {
 	
 	private static AdaptService APDAT_SERVICE = new AdaptService();
 
-
 	public static void main(String[] args) {
 		
 		/**
@@ -101,7 +100,7 @@ public class MainConsole {
 	private void showDutyResult (List<OutputResultEntity> outputResultList) {
 	
 		for (OutputResultEntity outputResult : outputResultList) {
-			System.out.println(outputResult);
+			System.out.println(outputResult.toString());
 		}
 		
 	}
