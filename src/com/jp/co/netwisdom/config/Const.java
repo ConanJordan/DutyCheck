@@ -30,6 +30,8 @@ public final class Const {
 	
 	public static final String YYYYMMDD_FORMAT = "yyyy-MM-dd";
 	
+	public static final String TIME_STAMP_FORMAT = "yyyyMMddHHmmSS";
+	
 	public static final Object[][] HOLLIDAYS = new Object[][]{
 		// 種別, 月, 日or週, 開始年, 終了年, 祝日名
 		{"fixed",   1,  1, 1949, 9999, "元日"},

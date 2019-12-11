@@ -267,4 +267,18 @@ public class CalendarUtil {
 		return date;
 	}
 	
+	/**
+	 * 获取时间戳：精确到秒
+	 * @return
+	 */
+	public static String timeStamp () {
+		
+		SimpleDateFormat sdf = new SimpleDateFormat(Const.TIME_STAMP_FORMAT);
+		
+		Date now = new Date();
+		
+		return sdf.format(now);
+		
+	}
+	
 }
