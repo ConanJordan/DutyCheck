@@ -30,22 +30,22 @@ public class NoteTableDao implements QueryIF {
 		
 		try {
 			prst = conn.prepareStatement(Const.SQL_SELECT_NOTE_TABLE);
-			prst.setLong(1, Long.parseLong(cardNo));  // ���ÿ���
+			prst.setLong(1, Long.parseLong(cardNo));
 			
-			// ���ò�ѯ�·�
+			
 			Calendar calendar = Calendar.getInstance();
 			
-			calendar.set(Calendar.YEAR, year);  // ������
+			calendar.set(Calendar.YEAR, year);
 			
-			calendar.set(Calendar.MONTH, month + 1);  //������
-			calendar.set(Calendar.DAY_OF_MONTH, 1);  // ������		
+			calendar.set(Calendar.MONTH, month + 1);
+			calendar.set(Calendar.DAY_OF_MONTH, 1);
 			java.util.Date startDate = calendar.getTime();
-			java.sql.Date sqlStartDate = new java.sql.Date(startDate.getTime());  // ���ò�ѯ�µĿ�ʼ��
+			java.sql.Date sqlStartDate = new java.sql.Date(startDate.getTime());
 			
-			calendar.set(Calendar.MONTH, month + 2);  //������
-			calendar.set(Calendar.DAY_OF_MONTH, 0);  // ������		
+			calendar.set(Calendar.MONTH, month + 2);
+			calendar.set(Calendar.DAY_OF_MONTH, 0);
 			java.util.Date endDate = calendar.getTime();
-			java.sql.Date sqlEndDate = new java.sql.Date(endDate.getTime());  // ���ò�ѯ�µĽ�����
+			java.sql.Date sqlEndDate = new java.sql.Date(endDate.getTime());
 			
 			prst.setDate(2, sqlStartDate);
 			prst.setDate(3, sqlEndDate);
@@ -54,9 +54,9 @@ public class NoteTableDao implements QueryIF {
 			
 			while (rs.next()) {
 				NoteTableEntity note = new NoteTableEntity();
-				note.setCardNo(rs.getLong(1));  // ����
-				note.setCti(rs.getString(2));  // ��ʱ��
-				note.setCdt(rs.getDate(3));  // ������
+				note.setCardNo(rs.getLong(1));
+				note.setCti(rs.getString(2));
+				note.setCdt(rs.getDate(3));
 				
 				resultList.add(note);
 			}

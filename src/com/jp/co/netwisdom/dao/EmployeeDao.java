@@ -27,7 +27,7 @@ public class EmployeeDao implements QueryIF {
 		conn = DataBaseFactory.CreateConnection();
 		try {
 			prst =conn.prepareStatement(Const.SQL_SELECT_ALL_EMPLYEES);
-			rs = prst.executeQuery();  // ִ�в�ѯ
+			rs = prst.executeQuery();
 			
 			while (rs.next()) {
 				EmployeeEntity employee = new EmployeeEntity();
