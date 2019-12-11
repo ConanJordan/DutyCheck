@@ -105,7 +105,7 @@ public class CalendarUtil {
 		// 计算相差的小时数
 		double hours = seconds / 60 / 60;
 		
-		if (!isLate(start) && hours > 1) {  // 没有迟到且相差的小时数大于1
+		if (startHour < 12 && hours > 1) {  // 12点之前来且相差的小时数大于1
 			hours = hours - 1;  // 减去午餐时间
 		}
 		
@@ -120,7 +120,7 @@ public class CalendarUtil {
 	public static boolean isLate (String time) {
 		// 获得小时数
 		int hour = Integer.parseInt(time.substring(0, 2));
-		return hour >= 12;  // 12点以后到算迟到
+		return hour >= 10;  // 10点以后到算迟到
 	}
 	
 	/**
@@ -131,7 +131,7 @@ public class CalendarUtil {
 	public static boolean isEarly (String time) {
 		// 获得小时数
 		int hour = Integer.parseInt(time.substring(0, 2));
-		return hour < 19;  // 19点以前离开算早退
+		return hour < 18;  // 18点以前离开算早退
 	}
 	
 	/**
