@@ -6,7 +6,7 @@ public class DutyEntity {
 	private double dutyTime;
 	private boolean isLate;
 	private boolean isEarly;
-	private boolean isAbsent;
+	private boolean isAbsent = true;
 	private boolean isHoliday;
 	private boolean isException;
 	
