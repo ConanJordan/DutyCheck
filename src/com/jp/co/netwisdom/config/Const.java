@@ -16,6 +16,7 @@ public final class Const {
 	public static final String URL = ReadUtil.getProperty("URL");
 	public static final String USERNAME = ReadUtil.getProperty("USERNAME");
 	public static final String PASSWORD = ReadUtil.getProperty("PASSWORD");
+	public static final String PATH_OUTPUT = ReadUtil.getProperty("PATH_OUTPUT");
 	
 	public static final String SQL_SELECT_ALL_EMPLYEES = ""
 			+ "SELECT ID, NAME, DEPT, CARDNO "
@@ -35,6 +36,10 @@ public final class Const {
 	public static final Object[][] HOLLIDAYS = new Object[][]{
 		// 種別, 月, 日or週, 開始年, 終了年, 祝日名
 		{"fixed",   1,  1, 1949, 9999, "元日"},
+		{"fixed",   1,  2, 1949, 9999, "年始"},
+		{"fixed",   1,  3, 1949, 9999, "年始"},
+		{"fixed",   1,  4, 1949, 9999, "年始"},
+		{"fixed",   1,  5, 1949, 9999, "年始"},
         {"fixed",   1, 15, 1949, 1999, "成人の日"},
         {"happy",   1,  2, 2000, 9999, "成人の日"},
         {"fixed",   2, 11, 1967, 9999, "建国記念の日"},
@@ -64,6 +69,9 @@ public final class Const {
         {"fixed",  11,  3, 1948, 9999, "文化の日"},
         {"fixed",  11, 23, 1948, 9999, "勤労感謝の日"},
         {"fixed",  12, 23, 1989, 2018, "天皇誕生日"},
+        {"fixed",   12,  29, 1949, 9999, "年末"},
+        {"fixed",   12,  30, 1949, 9999, "年末"},
+        {"fixed",   12,  31, 1949, 9999, "年末"},
         //以下、1年だけの祝日
         {"fixed",   4, 10, 1959, 1959, "皇太子明仁親王の結婚の儀"},
         {"fixed",   2, 24, 1989, 1989, "昭和天皇の大喪の礼"},

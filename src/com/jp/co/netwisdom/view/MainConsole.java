@@ -1,14 +1,18 @@
 package com.jp.co.netwisdom.view;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+
 import com.jp.co.netwisdom.config.Const;
 import com.jp.co.netwisdom.entity.EmployeeEntity;
 import com.jp.co.netwisdom.entity.NoteTableEntity;
 import com.jp.co.netwisdom.entity.OutputResultEntity;
+import com.jp.co.netwisdom.io.CreateExcel;
 import com.jp.co.netwisdom.service.AdaptService;
 import com.jp.co.netwisdom.service.EmployeeService;
 import com.jp.co.netwisdom.service.NoteTableService;
@@ -75,8 +79,16 @@ public class MainConsole {
 			}
 			
 			// 在控制台输出结果内容
-			CONSOLE.showDutyResult(outputResultList);
+			//CONSOLE.showDutyResult(outputResultList);
 			
+			/*
+			 * 写入Excel文件
+			 */
+			if (CONSOLE.outputFile(inputYear, inputMonth, outputResultList)) {
+				System.out.println("写入Excel文件成功。存储的文件路径为：" + Const.PATH_OUTPUT);
+			} else {
+				System.out.println("写入Excel文件失败。");
+			}
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -106,9 +118,11 @@ public class MainConsole {
 	}
 	
 	// 输出到excel文件
-	private boolean outputFile (){
-		// TODO
-		return true;
+	private boolean outputFile (int year, int month, List<OutputResultEntity> outputResultList) throws IOException{
+		CreateExcel ce = new CreateExcel (year, month, outputResultList);
+		HSSFWorkbook book = ce.edit();
+		String fileName = ce.create();
+		return ce.save(fileName, book);
 	}
 
 }

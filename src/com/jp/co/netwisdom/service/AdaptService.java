@@ -121,6 +121,8 @@ public class AdaptService {
 				duty.setLate(CalendarUtil.isLate(startTime));
 				// 早退判断
 				duty.setEarly(CalendarUtil.isEarly(endTime));
+				// 没有缺勤
+				duty.setAbsent(false);
 			}
 			
 			outputResult.getDuties().add(duty);  // 把考勤对象放入要返回的结果集中	
@@ -144,8 +146,11 @@ public class AdaptService {
 	 */
 	private void setDutyStatis (OutputResultEntity outputResult) {
 		DutyStatisEntity dutyStatis = outputResult.getDutyStatis();
-		for (DutyEntity duty : outputResult.getDuties()) {  // 迟到早退或异常的情况
-			if (duty.isException() || duty.isLate() || duty.isEarly()) {
+		for (DutyEntity duty : outputResult.getDuties()) {
+			if (duty.isAbsent() == false) {  // 没有缺勤的话
+				dutyStatis.setRealDay(dutyStatis.getRealDay() + 1);
+			}
+			if (duty.isException() || duty.isLate() || duty.isEarly()) {  // 迟到早退或异常的情况
 				dutyStatis.setLateEarly(dutyStatis.getLateEarly() + 1);
 			}
 			// 出勤时间累计

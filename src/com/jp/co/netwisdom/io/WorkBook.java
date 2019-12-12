@@ -1,8 +1,9 @@
-package com.jp.co.netwisdom.util;
+package com.jp.co.netwisdom.io;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.List;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -16,108 +17,119 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
 
+import com.jp.co.netwisdom.entity.DutyEntity;
+import com.jp.co.netwisdom.entity.DutyStatisEntity;
+import com.jp.co.netwisdom.entity.OutputResultEntity;
+import com.jp.co.netwisdom.util.CalendarUtil;
+
 /**
- * Ğ´ÈëWorkbookÎÄ¼şµÄUtilÀà
+ * å†™å…¥Workbookæ–‡ä»¶çš„Utilç±»
  */
-public class WorkBookUtil {
+public class WorkBook {
 	
-	private static final String NAME = "ÊÏÃû";
-	private static final String WEEK = "ê×ÈÕ";
-	private static final String DAY = "ÈÕ";
-	private static final String SUNDAY = "ÈÕ";
-	private static final String MONDAY = "ÔÂ";
-	private static final String TUESDAY = "»ğ";
-	private static final String WEDNESDAY = "Ë®";
-	private static final String THURSDAY = "Ä¾";
-	private static final String FRIDAY = "½ğ";
-	private static final String SATURDAY = "ÍÁ";
-	private static final String DAYS = "ÌìÊı";
-	private static final String TIME = "•rég";
-	private static final String COUNTS = "´ÎÊı";
-	private static final String DUTY_TIMES = "³öÇÚ\n•rég";  // ¡¸³öÇÚ•rég¡¹»»ĞĞÏÔÊ¾
-	private static final String PREDICT_DAYS = "Óè¶¨³öÇÚ";
-	private static final String REAL_DAYS = "ŒgëH³öÇÚ";
-	private static final String DUTY_TIME = "³öÇÚ•rég";
-	private static final String LATE_EARLY = "³Ùµ½ÔçÍË";
+	private static final String NAME = "æ°å";
+	private static final String WEEK = "æ›œæ—¥";
+	private static final String DAY = "æ—¥";
+	private static final String SUNDAY = "æ—¥";
+	private static final String MONDAY = "æœˆ";
+	private static final String TUESDAY = "ç«";
+	private static final String WEDNESDAY = "æ°´";
+	private static final String THURSDAY = "æœ¨";
+	private static final String FRIDAY = "é‡‘";
+	private static final String SATURDAY = "åœŸ";
+	private static final String DAYS = "å¤©æ•°";
+	private static final String TIME = "æ™‚é–“";
+	private static final String COUNTS = "æ¬¡æ•°";
+	private static final String DUTY_TIMES = "å‡ºå‹¤\næ™‚é–“";  // ã€Œå‡ºå‹¤æ™‚é–“ã€æ¢è¡Œæ˜¾ç¤º
+	private static final String PREDICT_DAYS = "äºˆå®šå‡ºå‹¤";
+	private static final String REAL_DAYS = "å®Ÿéš›å‡ºå‹¤";
+	private static final String DUTY_TIME = "å‡ºå‹¤æ™‚é–“";
+	private static final String LATE_EARLY = "è¿Ÿåˆ°æ—©é€€";
 
 	/**
-	 * Ê½Ñù£ºË®Æ½´¹Ö±¾ÓÖĞ
+	 * å¼æ ·ï¼šæ°´å¹³å‚ç›´å±…ä¸­
 	 */
 	private static HSSFCellStyle CELL_STYLE_CENTER;
 
 	/**
-	 * Ê½Ñù£ºË®Æ½´¹Ö±¾ÓÖĞ²¢ÊúÖ±ÅÅÁĞÎÄ×Ö
+	 * å¼æ ·ï¼šæ°´å¹³å‚ç›´å±…ä¸­å¹¶ç«–ç›´æ’åˆ—æ–‡å­—
 	 */
 	private static HSSFCellStyle CELL_STYLE_CENTER_VERTICAL;
 
 	/**
-	 * Ê½Ñù£ºË®Æ½¾ÓÖĞÇÒÎÄ×Ö¿ÉÒÔ»»ĞĞ
+	 * å¼æ ·ï¼šæ°´å¹³å±…ä¸­ä¸”æ–‡å­—å¯ä»¥æ¢è¡Œ
 	 */
 	private static HSSFCellStyle CELL_STYLE_CENTER_RETURN;
 	
 	/**
-	 * Ê½Ñù£º(±êÌâÓÃ)Ë®Æ½´¹Ö±¾ÓÖĞ£¬¼Ó´Ö£¬18ºÅ
+	 * å¼æ ·ï¼š(æ ‡é¢˜ç”¨)æ°´å¹³å‚ç›´å±…ä¸­ï¼ŒåŠ ç²—ï¼Œ18å·
 	 */
 	private static HSSFCellStyle CELL_STYLE_TITLE;
 	
 	/**
-	 * Ê½Ñù£ºË®Æ½´¹Ö±¾ÓÖĞ£¬ºìÉ«Ìî³ä
+	 * å¼æ ·ï¼šæ°´å¹³å‚ç›´å±…ä¸­ï¼Œçº¢è‰²å¡«å……
 	 */
 	private static HSSFCellStyle CELL_STYLE_RED;
 	
 	/**
-	 * Ê½Ñù£ºË®Æ½´¹Ö±¾ÓÖĞ£¬»ÆÉ«Ìî³ä
+	 * å¼æ ·ï¼šæ°´å¹³å‚ç›´å±…ä¸­ï¼Œé»„è‰²å¡«å……
 	 */
 	private static HSSFCellStyle CELL_STYLE_YELLOW;
 
 	/**
-	 * ¹¤×÷²¾
+	 * å·¥ä½œç°¿
 	 */
 	private HSSFWorkbook book;	
 	/**
-	 * ¹¤×÷±í
+	 * å·¥ä½œè¡¨
 	 */
 	private HSSFSheet sheet;	
 	/**
-	 * ¹¤×÷±íµÄĞĞ
+	 * å·¥ä½œè¡¨çš„è¡Œ
 	 */
 	private HSSFRow row;
 	/**
-	 * µ¥Ôª¸ñ
+	 * å•å…ƒæ ¼
 	 */
 	private HSSFCell cell;
 	/**
-	 * Äê·İ
+	 * å¹´ä»½
 	 */
 	private int year;
 	/**
-	 * ÔÂ·İ
+	 * æœˆä»½
 	 */
 	private int month;
 	
-	public WorkBookUtil (String sheetName, int year, int month) {
+	/**
+	 * è¦è¾“å‡ºçš„æ•°æ®é›†åˆ
+	 */
+	private List<OutputResultEntity> outputResults;
+	
+	public WorkBook (String sheetName, int year, int month, List<OutputResultEntity> outputResults) {
 		this.book = new HSSFWorkbook();
 		this.sheet = this.book.createSheet(sheetName);
 		this.year = year;
 		this.month = month;
+		this.outputResults = outputResults;
 	}
 	
 	/**
-	 * ³õÊ¼»¯¹¤×÷±í
+	 * åˆå§‹åŒ–å·¥ä½œè¡¨
 	 */
 	public void initSheet () {
-		// ¹¤×÷±í±êÌâ£ºxxxÇÚÎñ±í
-		// ºÏ²¢×îÉÏ·½µ¥Ôª¸ñ
-		// ÉèÖÃ2,3Á½ĞĞµ¥Ôª¸ñ
+		// å·¥ä½œè¡¨æ ‡é¢˜ï¼šxxxå‹¤åŠ¡è¡¨
+		// åˆå¹¶æœ€ä¸Šæ–¹å•å…ƒæ ¼
+		// è®¾ç½®2,3ä¸¤è¡Œå•å…ƒæ ¼
 		
-		// ³õÊ¼»¯µ¥Ôª¸ñÊ½Ñù
+		// åˆå§‹åŒ–å•å…ƒæ ¼å¼æ ·
 		this.initCellStyle();
 		
 		this.setLayout();
 	}
 	
 	/**
-	 * ³õÊ¼»¯Ê½Ñù
+	 * åˆå§‹åŒ–å¼æ ·
 	 */
 	private void initCellStyle () {
 		
@@ -157,7 +169,7 @@ public class WorkBookUtil {
 	}
 	
 	/**
-	 * »ñÈ¡µ¥Ôª¸ñ,µ¥Ôª¸ñ²»´æÔÚµÄ»°¾ÍÉú³ÉÒ»¸ö²¢·µ»Ø
+	 * è·å–å•å…ƒæ ¼,å•å…ƒæ ¼ä¸å­˜åœ¨çš„è¯å°±ç”Ÿæˆä¸€ä¸ªå¹¶è¿”å›
 	 * @param rowNum
 	 * @param collumnNum
 	 * @return
@@ -165,10 +177,10 @@ public class WorkBookUtil {
 	private HSSFCell getCell (int rowNum, int collumnNum) {
 		HSSFCell cell = null;
 		
-		// »ñÈ¡ĞĞ
+		// è·å–è¡Œ
 		HSSFRow row = this.sheet.getRow(rowNum) == null ?
 				this.sheet.createRow(rowNum) : this.sheet.getRow(rowNum);
-		// »ñÈ¡ÁĞ
+		// è·å–åˆ—
 		cell = row.getCell(collumnNum) == null ?
 				row.createCell(collumnNum) : row.getCell(collumnNum);
 				
@@ -176,7 +188,7 @@ public class WorkBookUtil {
 	}
 	
 	/**
-	 * ºÏ²¢µ¥Ôª¸ñ
+	 * åˆå¹¶å•å…ƒæ ¼
 	 * @param startRow
 	 * @param startCollumn
 	 * @param endRow
@@ -184,49 +196,49 @@ public class WorkBookUtil {
 	 */
 	private void combine (int firstRow, int lastRow, int firstCollumn, int lastCollumn) {
 			
-		// »ñÈ¡ĞèÒªºÏ²¢µÄµ¥Ôª¸ñ
+		// è·å–éœ€è¦åˆå¹¶çš„å•å…ƒæ ¼
 		for (int rowNum = firstRow; rowNum <= lastRow; rowNum ++) {
 			for (int collumnNum = firstCollumn; collumnNum <= lastCollumn; collumnNum ++) {
 				this.getCell(rowNum, collumnNum);
 			}
 		}
 					
-		// ºÏ²¢µ¥Ôª¸ñ
+		// åˆå¹¶å•å…ƒæ ¼
 		CellRangeAddress region = new CellRangeAddress (firstRow,lastRow,firstCollumn,lastCollumn);		
 		this.sheet.addMergedRegion(region);
 	}
 	
 	/**
-	 * Ïòµ¥Ôª¸ñÀïĞ´ÈëÄÚÈİ
+	 * å‘å•å…ƒæ ¼é‡Œå†™å…¥å†…å®¹
 	 * @param value
 	 * @param row
 	 * @param collumn
 	 */
 	private void write (String value, int rowNum, int collumnNum) {
-		// »ñÈ¡µ¥Ôª¸ñ
+		// è·å–å•å…ƒæ ¼
 		HSSFCell cell = this.getCell(rowNum, collumnNum);
-		// Ğ´ÈëÄÚÈİ
+		// å†™å…¥å†…å®¹
 		cell.setCellValue(value);
 	}
 	
 	/**
-	 * Ïòµ¥Ôª¸ñÀïĞ´ÈëÄÚÈİ²¢ÉèÖÃÊ½Ñù
+	 * å‘å•å…ƒæ ¼é‡Œå†™å…¥å†…å®¹å¹¶è®¾ç½®å¼æ ·
 	 * @param value
 	 * @param rowNum
 	 * @param collumnNum
 	 * @param cellStyle
 	 */
 	private void write (String value, int rowNum, int collumnNum, HSSFCellStyle cellStyle) {
-		// »ñÈ¡µ¥Ôª¸ñ
+		// è·å–å•å…ƒæ ¼
 		HSSFCell cell = this.getCell(rowNum, collumnNum);
-		// ÉèÖÃµ¥Ôª¸ñÊ½Ñù
+		// è®¾ç½®å•å…ƒæ ¼å¼æ ·
 		cell.setCellStyle(cellStyle);
-		// Ğ´ÈëÄÚÈİ
+		// å†™å…¥å†…å®¹
 		cell.setCellValue(value);
 	}
 	
 	/**
-	 * °Ñ¹¤×÷²¾µÄÄÚÈİĞ´ÈëÎÄ¼şÖĞ
+	 * æŠŠå·¥ä½œç°¿çš„å†…å®¹å†™å…¥æ–‡ä»¶ä¸­
 	 * @param fos
 	 * @throws IOException 
 	 */
@@ -235,94 +247,76 @@ public class WorkBookUtil {
 	}
 	
 	/**
-	 * ÉèÖÃµ¥Ôª¸ñÊ½Ñù
+	 * è®¾ç½®å•å…ƒæ ¼å¼æ ·
 	 * @param rowNum
 	 * @param collumnNum
 	 */
 	private void setStyle (int rowNum, int collumnNum, HSSFCellStyle cellStyle) {
-		// »ñÈ¡µ¥Ôª¸ñ
+		// è·å–å•å…ƒæ ¼
 		this.cell = this.getCell(rowNum, collumnNum);
-		// ÉèÖÃµ¥Ôª¸ñÊ½Ñù
+		// è®¾ç½®å•å…ƒæ ¼å¼æ ·
 		this.cell.setCellStyle(cellStyle);
-	}
-
-	/**
-	 * ÉèÖÃµ¥Ôª¸ñÊúÏòÎÄ×Ö
-	 * @param rowNum
-	 * @param collumnNum
-	 */
-	private void setVertical (int rowNum, int collumnNum) {
-		// ÉèÖÃµ¥Ôª¸ñÊ½Ñù:ÊúÏòÎÄ×Ö
-		HSSFCellStyle cellStyle = this.getCellStyle(rowNum, collumnNum);
-		cellStyle.setRotation((short) 0xff);
-		this.setStyle(rowNum, collumnNum, cellStyle);
 	}
 	
 	/**
-	 * ºìÉ«±³¾°Ìî³ä
+	 * çº¢è‰²èƒŒæ™¯å¡«å……
 	 * @param rowNum
 	 * @param collumnNum
 	 */
 	private void fillRed (int rowNum, int collumnNum) {
-		// »ñÈ¡µ¥Ôª¸ñ
+		// è·å–å•å…ƒæ ¼
 		this.cell = this.getCell(rowNum, collumnNum);
-		// ÉèÖÃµ¥Ôª¸ñÊ½Ñù:ºìÉ«±³¾°
-		HSSFCellStyle cellStyle = this.getCellStyle(rowNum, collumnNum);
-		cellStyle.setFillForegroundColor(IndexedColors.RED.getIndex());
-		cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-		this.setStyle(rowNum, collumnNum, cellStyle);
+		// è®¾ç½®å•å…ƒæ ¼å¼æ ·:çº¢è‰²èƒŒæ™¯
+		this.setStyle(rowNum, collumnNum, CELL_STYLE_RED);
 	}
 	
 	/**
-	 * »ÆÉ«±³¾°Ìî³ä
+	 * é»„è‰²èƒŒæ™¯å¡«å……
 	 * @param rowNum
 	 * @param collumnNum
 	 */
 	private void fillYellow (int rowNum, int collumnNum) {
-		// »ñÈ¡µ¥Ôª¸ñ
+		// è·å–å•å…ƒæ ¼
 		this.cell = this.getCell(rowNum, collumnNum);
-		// ÉèÖÃµ¥Ôª¸ñÊ½Ñù:ºìÉ«±³¾°
-		HSSFCellStyle cellStyle = this.getCellStyle(rowNum, collumnNum);
-		cellStyle.setFillForegroundColor(IndexedColors.YELLOW.getIndex());
-		cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-		this.setStyle(rowNum, collumnNum, cellStyle);
+		// è®¾ç½®å•å…ƒæ ¼å¼æ ·:çº¢è‰²èƒŒæ™¯
+		this.setStyle(rowNum, collumnNum, CELL_STYLE_YELLOW);
 	}
 	
 	/**
-	 * ÉèÖÃĞĞ¸ß
+	 * è®¾ç½®è¡Œé«˜
 	 * @param rowNum
 	 * @param height
 	 */
 	private void setHeight (int rowNum, short height) {
-		// »ñÈ¡ĞĞ
+		// è·å–è¡Œ
 		this.row = this.sheet.getRow(rowNum) == null ? 
 				this.sheet.createRow(rowNum) : this.sheet.getRow(rowNum);
-		// ÉèÖÃĞĞ¸ß
+		// è®¾ç½®è¡Œé«˜
 		this.row.setHeight(height);
 	}
 	
-	// ÉèÖÃ¹¤×÷±íÕûÌå²¼¾Ö
+	// è®¾ç½®å·¥ä½œè¡¨æ•´ä½“å¸ƒå±€
 	private void setLayout () {
-		// »ñÈ¡Ä¿±êÔÂµÄÌìÊı
+		// è·å–ç›®æ ‡æœˆçš„å¤©æ•°
 		int days = CalendarUtil.getDaysOfMonth(year, month);
 		
-		// ÉèÖÃÇ°ÈıĞĞµÄµ¥Ôª¸ñ¿í¸ß
-		// Ç°Á½ÁĞ¿í2000£¬ºóÃæµÄ¿í1200
-		// µÚ¶şĞĞ¸ß1500
+		// è®¾ç½®å‰ä¸‰è¡Œçš„å•å…ƒæ ¼å®½é«˜
+		// å‰ä¸¤åˆ—å®½2000ï¼Œåé¢çš„å®½1200
+		// ç¬¬äºŒè¡Œé«˜1500
 		this.sheet.setColumnWidth(0, 2000);
 		this.sheet.setColumnWidth(1, 2000);
-		for (int i = 2; i < 2 + days + 4; i ++) {  // Ç°ÃæµÄ2´ú±íÇ°Á½ÁĞ£¬ºóÃæµÄ4´ú±í×îºó4ÁĞ
+		for (int i = 2; i < 2 + days + 4; i ++) {  // å‰é¢çš„2ä»£è¡¨å‰ä¸¤åˆ—ï¼Œåé¢çš„4ä»£è¡¨æœ€å4åˆ—
 			this.sheet.setColumnWidth(i, 1200);
 		}
 		this.setHeight(1, (short) 1500);
 		
-		// ºÏ²¢µÚÒ»ĞĞµÄµ¥Ôª¸ñ
+		// åˆå¹¶ç¬¬ä¸€è¡Œçš„å•å…ƒæ ¼
 		this.combine(0,0,0,2 + days + 4 - 1);
 		
-		// ºÏ²¢µÚÒ»ÁĞµÄ2,3ĞĞµ¥Ôª¸ñ
+		// åˆå¹¶ç¬¬ä¸€åˆ—çš„2,3è¡Œå•å…ƒæ ¼
 		this.combine(1,2,0,0);
 		
-		// ÉèÖÃÇ°ÈıĞĞÈ«²¿Ë®Æ½´¹Ö±¾ÓÖĞ
+		// è®¾ç½®å‰ä¸‰è¡Œå…¨éƒ¨æ°´å¹³å‚ç›´å±…ä¸­
 		/*this.setAlignmentCenter(0, 0);
 		this.setAlignmentCenter(1, 0);
 		for (int i = 1; i < 2 + days + 4; i ++) {
@@ -330,22 +324,18 @@ public class WorkBookUtil {
 			this.setAlignmentCenter(2, i);
 		}*/
 		
-		// Ğ´ÈëÇ°ÈıĞĞµÄÄÚÈİ
+		// å†™å…¥å‰ä¸‰è¡Œçš„å†…å®¹
 		this.write(this.sheet.getSheetName(), 
-				0, 0, CELL_STYLE_TITLE);  // µÚÒ»ĞĞ
+				0, 0, CELL_STYLE_TITLE);  // ç¬¬ä¸€è¡Œ
 		
-		this.write(NAME, 1, 0, CELL_STYLE_CENTER);  // µÚ¶şĞĞµÚÒ»ÁĞ
-		this.write(WEEK, 1, 1, CELL_STYLE_CENTER);  // µÚ¶şĞĞµÚ¶şÁĞ
-		this.write(DAY, 2, 1, CELL_STYLE_CENTER);  // µÚÈıĞĞµÚ¶şÁĞ
+		this.write(NAME, 1, 0, CELL_STYLE_CENTER);  // ç¬¬äºŒè¡Œç¬¬ä¸€åˆ—
+		this.write(WEEK, 1, 1, CELL_STYLE_CENTER);  // ç¬¬äºŒè¡Œç¬¬äºŒåˆ—
+		this.write(DAY, 2, 1, CELL_STYLE_CENTER);  // ç¬¬ä¸‰è¡Œç¬¬äºŒåˆ—
 		
-		// Ğ´Èë×îºóËÄÁĞµÄÄÚÈİ:×¢ÒâÊúÖ±ÅÅÁĞ
-		this.setVertical(1, 2 + days);
+		// å†™å…¥æœ€åå››åˆ—çš„å†…å®¹:æ³¨æ„ç«–ç›´æ’åˆ—
 		this.write(PREDICT_DAYS, 1, 2 + days, CELL_STYLE_CENTER_VERTICAL);
-		this.setVertical(1, 2 + days + 1);
 		this.write(REAL_DAYS, 1, 2 + days + 1, CELL_STYLE_CENTER_VERTICAL);
-		this.setVertical(1, 2 + days + 2);
 		this.write(DUTY_TIME, 1, 2 + days + 2, CELL_STYLE_CENTER_VERTICAL);
-		this.setVertical(1, 2 + days + 3);
 		this.write(LATE_EARLY, 1, 2 + days + 3, CELL_STYLE_CENTER_VERTICAL);
 		
 		this.write(DAYS, 2, 2 + days, CELL_STYLE_CENTER);
@@ -353,7 +343,7 @@ public class WorkBookUtil {
 		this.write(TIME, 2, 2 + days + 2, CELL_STYLE_CENTER);
 		this.write(COUNTS, 2, 2 + days + 3, CELL_STYLE_CENTER);
 		
-		// Ğ´ÈëÖĞ¼äÁĞµÄĞÇÆÚºÍÈÕ£ºĞÇÆÚÔÚÉÏ£¬ÈÕÔÚÏÂ
+		// å†™å…¥ä¸­é—´åˆ—çš„æ˜ŸæœŸå’Œæ—¥ï¼šæ˜ŸæœŸåœ¨ä¸Šï¼Œæ—¥åœ¨ä¸‹
 		for (int i = 1; i <= days; i ++) {
 			this.write(this.getWeek(i), 1,  2 + i - 1, CELL_STYLE_CENTER);
 			this.write(String.valueOf(i), 2, 2 + i - 1, CELL_STYLE_CENTER);
@@ -362,7 +352,7 @@ public class WorkBookUtil {
 	}
 	
 	/**
-	 * »ñÈ¡ĞÇÆÚ
+	 * è·å–æ˜ŸæœŸ
 	 * @param day
 	 * @return
 	 */
@@ -401,11 +391,104 @@ public class WorkBookUtil {
 		
 		return week;
 	}
-	
-	private HSSFCellStyle getCellStyle (int rowNum, int collumnNum) {
-		HSSFCell cell = this.getCell(rowNum, collumnNum);
-		HSSFCellStyle cellStyle = cell.getCellStyle();
-		return cellStyle;
+
+	/**
+	 * ç¼–è¾‘å·¥ä½œè¡¨çš„æ•°æ®å†…å®¹
+	 */
+	public void edit () {
+		
+		int rowNum;  // è¡Œç´¢å¼•
+		int collumnNum;  // åˆ—ç´¢å¼•
+		int days = CalendarUtil.getDaysOfMonth(this.year, this.month);  // ç›®æ ‡æœˆçš„å¤©æ•°
+		int predictedDays = CalendarUtil.getPredictedDays(this.year, this.month);  // è·å–è¯¥æœˆçš„é¢„å®šå‡ºå‹¤å¤©æ•°
+		double predictedTimes = predictedDays * 8;  // è·å–è¯¥å­•çš„é¢„å®šå‡ºå‹¤æ—¶é•¿
+		
+		for (int i = 0; i < this.outputResults.size(); i ++) {
+			OutputResultEntity outputResult = outputResults.get(i);
+			DutyStatisEntity dutyStatis = outputResult.getDutyStatis();  // è·å¾—è€ƒå‹¤å¯¹è±¡ç»Ÿè®¡
+			rowNum = 3 + i;
+			this.write(outputResult.getName(), rowNum, 0, CELL_STYLE_CENTER);  // å†™å…¥å§“å
+			this.write(DUTY_TIMES, rowNum, 1, CELL_STYLE_CENTER_RETURN);  // å†™å…¥ã€Œå‡ºå‹¤æ™‚é–“ã€
+			
+			for (int day = 1; day <= days; day ++) {
+				DutyEntity duty = outputResult.getDuties().get(day - 1);  // è·å¾—è€ƒå‹¤å¯¹è±¡
+				
+				collumnNum = 2 + day - 1; // è·å¾—åˆ—ç´¢å¼•
+				
+				// åœŸæ—¥ãƒ»ç¥æ—¥ã‹ã©ã†ã‹ã‚’åˆ¤æ–­ã™ã‚‹
+				if (CalendarUtil.isWeekend(this.year, this.month, day) 
+						|| CalendarUtil.isHolliday(this.year, this.month, day)) {  // åœŸæ—¥ãƒ»ç¥æ—¥ã§ã‚ã‚‹å ´åˆ
+					this.write(duty.getDutyTime() == 0 ? "" : String.valueOf(duty.getDutyTime()), 
+							rowNum, collumnNum, CELL_STYLE_CENTER);
+				} else {  // åœŸæ—¥ãƒ»ç¥æ—¥ã§ã¯ãªã„å ´åˆ
+					if (duty.isException()) {  // ä¾‹å¤–ã®å ´åˆ
+						this.write(duty.getDutyTime() == 0 ? "" : String.valueOf(duty.getDutyTime()), 
+								rowNum, collumnNum, CELL_STYLE_RED);  // èµ¤ã„èƒŒæ™¯è‰²
+					} else if (duty.isLate()) {  // é…åˆ»ã®å ´åˆ
+						this.write(duty.getDutyTime() == 0 ? "" : String.valueOf(duty.getDutyTime()), 
+								rowNum, collumnNum, CELL_STYLE_RED);  // èµ¤ã„èƒŒæ™¯è‰²
+					} else if (duty.getDutyTime() < 8){
+						this.write(duty.getDutyTime() == 0 ? "" : String.valueOf(duty.getDutyTime()), 
+								rowNum, collumnNum, CELL_STYLE_YELLOW);  // é»„è‰²ã„èƒŒæ™¯è‰²
+					} else {
+						this.write(duty.getDutyTime() == 0 ? "" : String.valueOf(duty.getDutyTime()), 
+								rowNum, collumnNum, CELL_STYLE_CENTER);
+					}
+				}
+
+			}  // å†…ã®ãƒ«ãƒ¼ãƒ—çµ‚äº†
+			
+			
+			/*
+			 * å‡ºå‹¤çµ±è¨ˆ
+			 */
+			// äºˆå®šå‡ºå‹¤
+			this.write(String.valueOf(predictedDays), 
+					rowNum, 
+					2 + days + 1 - 1, 
+					CELL_STYLE_CENTER);
+			
+			// å®Ÿéš›å‡ºå‹¤
+			if (dutyStatis.getRealDay() < predictedDays) {
+				this.write(String.valueOf(dutyStatis.getRealDay()), 
+						rowNum, 
+						2 + days + 2 - 1, 
+						CELL_STYLE_RED);
+			} else {
+				this.write(String.valueOf(dutyStatis.getRealDay()), 
+						rowNum, 
+						2 + days + 2 - 1, 
+						CELL_STYLE_CENTER);
+			}
+			
+			// å‡ºå‹¤æ™‚é–“
+			if (dutyStatis.getDutyTime() < predictedTimes) {
+				this.write(String.valueOf(dutyStatis.getDutyTime()), 
+						rowNum, 
+						2 + days + 3 - 1, 
+						CELL_STYLE_RED);
+			} else {
+				this.write(String.valueOf(dutyStatis.getDutyTime()), 
+						rowNum, 
+						2 + days + 3 - 1, 
+						CELL_STYLE_CENTER);
+			}
+			
+			// è¿Ÿåˆ°æ—©é€€
+			this.write(String.valueOf(dutyStatis.getLateEarly()), 
+					rowNum, 
+					2 + days + 4 - 1, 
+					CELL_STYLE_RED);
+			
+		}  // å¤–ã®ãƒ«ãƒ¼ãƒ—çµ‚äº†
 	}
+
+	public HSSFWorkbook getBook() {
+		return book;
+	}
+
+	public void setBook(HSSFWorkbook book) {
+		this.book = book;
+	}	
 	
 }

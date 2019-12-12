@@ -149,7 +149,7 @@ public class CalendarUtil {
 		
 		Object[] holliday;  // 祝日
 		
-		for (int i = 0; i <= Const.HOLLIDAYS.length; i ++) {
+		for (int i = 0; i < Const.HOLLIDAYS.length; i ++) {
 			holliday = Const.HOLLIDAYS[i];
 			if (holliday[1].equals(month)
 				&& holliday[2].equals(date)
@@ -174,18 +174,25 @@ public class CalendarUtil {
 		boolean result = false;
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(Calendar.YEAR, year);
-		calendar.set(Calendar.MONTH, month);
+		calendar.set(Calendar.MONTH, month - 1);
 		calendar.set(Calendar.DATE, date);
 		switch (calendar.get(Calendar.DAY_OF_WEEK)) {
 			case Calendar.MONDAY :
+				break;
 			case Calendar.TUESDAY :
+				break;
 			case Calendar.WEDNESDAY :
+				break;
 			case Calendar.THURSDAY :
+				break;
 			case Calendar.FRIDAY :
 				break;
 			case Calendar.SATURDAY :
+				result = true;
+				break;
 			case Calendar.SUNDAY :
 				result = true;
+				break;
 				
 		}
 		return result;
@@ -279,6 +286,26 @@ public class CalendarUtil {
 		
 		return sdf.format(now);
 		
+	}
+	
+	/**
+	 * 获取目标月的预计勤务天数
+	 * @param year
+	 * @param month
+	 * @return
+	 */
+	public static int getPredictedDays (int year, int month) {
+		int sum = 0;
+		int days = CalendarUtil.getDaysOfMonth(year, month);
+		for (int i = 0; i <= days; i ++) {
+			if (CalendarUtil.isWeekend(year, month, i) || CalendarUtil.isHolliday(year, month, i)) {
+				
+			} else {
+				sum ++;
+			}
+		}
+		
+		return sum;
 	}
 	
 }
