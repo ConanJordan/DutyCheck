@@ -6,12 +6,14 @@ import java.util.Calendar;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 /**
@@ -39,6 +41,36 @@ public class WorkBookUtil {
 	private static final String LATE_EARLY = "迟到早退";
 
 	/**
+	 * 式样：水平垂直居中
+	 */
+	private static HSSFCellStyle CELL_STYLE_CENTER;
+
+	/**
+	 * 式样：水平垂直居中并竖直排列文字
+	 */
+	private static HSSFCellStyle CELL_STYLE_CENTER_VERTICAL;
+
+	/**
+	 * 式样：水平居中且文字可以换行
+	 */
+	private static HSSFCellStyle CELL_STYLE_CENTER_RETURN;
+	
+	/**
+	 * 式样：(标题用)水平垂直居中，加粗，18号
+	 */
+	private static HSSFCellStyle CELL_STYLE_TITLE;
+	
+	/**
+	 * 式样：水平垂直居中，红色填充
+	 */
+	private static HSSFCellStyle CELL_STYLE_RED;
+	
+	/**
+	 * 式样：水平垂直居中，黄色填充
+	 */
+	private static HSSFCellStyle CELL_STYLE_YELLOW;
+
+	/**
 	 * 工作簿
 	 */
 	private HSSFWorkbook book;	
@@ -54,10 +86,6 @@ public class WorkBookUtil {
 	 * 单元格
 	 */
 	private HSSFCell cell;
-	/**
-	 * 单元格式样
-	 */
-	private HSSFCellStyle cellStyle;
 	/**
 	 * 年份
 	 */
@@ -82,7 +110,50 @@ public class WorkBookUtil {
 		// 合并最上方单元格
 		// 设置2,3两行单元格
 		
+		// 初始化单元格式样
+		this.initCellStyle();
+		
 		this.setLayout();
+	}
+	
+	/**
+	 * 初始化式样
+	 */
+	private void initCellStyle () {
+		
+		CELL_STYLE_CENTER = this.book.createCellStyle();
+		CELL_STYLE_CENTER.setAlignment(HorizontalAlignment.CENTER);
+		CELL_STYLE_CENTER.setVerticalAlignment(VerticalAlignment.CENTER);
+		
+		CELL_STYLE_CENTER_VERTICAL = this.book.createCellStyle();
+		CELL_STYLE_CENTER_VERTICAL.setAlignment(HorizontalAlignment.CENTER);
+		CELL_STYLE_CENTER_VERTICAL.setVerticalAlignment(VerticalAlignment.CENTER);
+		CELL_STYLE_CENTER_VERTICAL.setRotation((short) 0xff);
+		
+		CELL_STYLE_CENTER_RETURN = this.book.createCellStyle();
+		CELL_STYLE_CENTER_RETURN.setAlignment(HorizontalAlignment.CENTER);
+		CELL_STYLE_CENTER_RETURN.setVerticalAlignment(VerticalAlignment.CENTER);
+		CELL_STYLE_CENTER_RETURN.setWrapText(true);
+		
+		CELL_STYLE_TITLE = this.book.createCellStyle();
+		CELL_STYLE_TITLE.setAlignment(HorizontalAlignment.CENTER);
+		CELL_STYLE_TITLE.setVerticalAlignment(VerticalAlignment.CENTER);
+		HSSFFont font = this.book.createFont();
+		font.setBold(true);
+		font.setFontHeightInPoints((short) 18);
+		CELL_STYLE_TITLE.setFont(font);
+		
+		CELL_STYLE_RED = this.book.createCellStyle();
+		CELL_STYLE_RED.setAlignment(HorizontalAlignment.CENTER);
+		CELL_STYLE_RED.setVerticalAlignment(VerticalAlignment.CENTER);
+		CELL_STYLE_RED.setFillForegroundColor(IndexedColors.RED.getIndex());
+		CELL_STYLE_RED.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		
+		CELL_STYLE_YELLOW = this.book.createCellStyle();
+		CELL_STYLE_YELLOW.setAlignment(HorizontalAlignment.CENTER);
+		CELL_STYLE_YELLOW.setVerticalAlignment(VerticalAlignment.CENTER);
+		CELL_STYLE_YELLOW.setFillForegroundColor(IndexedColors.YELLOW.getIndex());
+		CELL_STYLE_YELLOW.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 	}
 	
 	/**
@@ -99,7 +170,7 @@ public class WorkBookUtil {
 				this.sheet.createRow(rowNum) : this.sheet.getRow(rowNum);
 		// 获取列
 		cell = row.getCell(collumnNum) == null ?
-				row.createCell(rowNum) : row.getCell(rowNum);
+				row.createCell(collumnNum) : row.getCell(collumnNum);
 				
 		return cell;
 	}
@@ -139,6 +210,22 @@ public class WorkBookUtil {
 	}
 	
 	/**
+	 * 向单元格里写入内容并设置式样
+	 * @param value
+	 * @param rowNum
+	 * @param collumnNum
+	 * @param cellStyle
+	 */
+	private void write (String value, int rowNum, int collumnNum, HSSFCellStyle cellStyle) {
+		// 获取单元格
+		HSSFCell cell = this.getCell(rowNum, collumnNum);
+		// 设置单元格式样
+		cell.setCellStyle(cellStyle);
+		// 写入内容
+		cell.setCellValue(value);
+	}
+	
+	/**
 	 * 把工作簿的内容写入文件中
 	 * @param fos
 	 * @throws IOException 
@@ -152,11 +239,11 @@ public class WorkBookUtil {
 	 * @param rowNum
 	 * @param collumnNum
 	 */
-	private void setStyle (int rowNum, int collumnNum) {
+	private void setStyle (int rowNum, int collumnNum, HSSFCellStyle cellStyle) {
 		// 获取单元格
 		this.cell = this.getCell(rowNum, collumnNum);
 		// 设置单元格式样
-		this.cell.setCellStyle(this.cellStyle);
+		this.cell.setCellStyle(cellStyle);
 	}
 
 	/**
@@ -165,12 +252,10 @@ public class WorkBookUtil {
 	 * @param collumnNum
 	 */
 	private void setVertical (int rowNum, int collumnNum) {
-		// 获取单元格
-		this.cell = this.getCell(rowNum, collumnNum);
 		// 设置单元格式样:竖向文字
-		this.cellStyle = this.book.createCellStyle();
-		this.cellStyle.setRotation((short) 0xff);
-		this.setStyle(rowNum, collumnNum);
+		HSSFCellStyle cellStyle = this.getCellStyle(rowNum, collumnNum);
+		cellStyle.setRotation((short) 0xff);
+		this.setStyle(rowNum, collumnNum, cellStyle);
 	}
 	
 	/**
@@ -182,10 +267,10 @@ public class WorkBookUtil {
 		// 获取单元格
 		this.cell = this.getCell(rowNum, collumnNum);
 		// 设置单元格式样:红色背景
-		this.cellStyle = this.book.createCellStyle();
-		this.cellStyle.setFillForegroundColor(IndexedColors.RED.getIndex());
-		this.cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-		this.setStyle(rowNum, collumnNum);
+		HSSFCellStyle cellStyle = this.getCellStyle(rowNum, collumnNum);
+		cellStyle.setFillForegroundColor(IndexedColors.RED.getIndex());
+		cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		this.setStyle(rowNum, collumnNum, cellStyle);
 	}
 	
 	/**
@@ -197,10 +282,10 @@ public class WorkBookUtil {
 		// 获取单元格
 		this.cell = this.getCell(rowNum, collumnNum);
 		// 设置单元格式样:红色背景
-		this.cellStyle = this.book.createCellStyle();
-		this.cellStyle.setFillForegroundColor(IndexedColors.YELLOW.getIndex());
-		this.cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-		this.setStyle(rowNum, collumnNum);
+		HSSFCellStyle cellStyle = this.getCellStyle(rowNum, collumnNum);
+		cellStyle.setFillForegroundColor(IndexedColors.YELLOW.getIndex());
+		cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		this.setStyle(rowNum, collumnNum, cellStyle);
 	}
 	
 	/**
@@ -222,12 +307,12 @@ public class WorkBookUtil {
 		int days = CalendarUtil.getDaysOfMonth(year, month);
 		
 		// 设置前三行的单元格宽高
-		// 前两列宽2000，后面的宽1000
+		// 前两列宽2000，后面的宽1200
 		// 第二行高1500
 		this.sheet.setColumnWidth(0, 2000);
 		this.sheet.setColumnWidth(1, 2000);
 		for (int i = 2; i < 2 + days + 4; i ++) {  // 前面的2代表前两列，后面的4代表最后4列
-			this.sheet.setColumnWidth(i, 1000);
+			this.sheet.setColumnWidth(i, 1200);
 		}
 		this.setHeight(1, (short) 1500);
 		
@@ -237,60 +322,43 @@ public class WorkBookUtil {
 		// 合并第一列的2,3行单元格
 		this.combine(1,2,0,0);
 		
-		// 设置前三行全部水平居中
-		this.setAlignmentCenter(0, 0);
+		// 设置前三行全部水平垂直居中
+		/*this.setAlignmentCenter(0, 0);
 		this.setAlignmentCenter(1, 0);
 		for (int i = 1; i < 2 + days + 4; i ++) {
 			this.setAlignmentCenter(1, i);
 			this.setAlignmentCenter(2, i);
-		}
+		}*/
 		
 		// 写入前三行的内容
 		this.write(this.sheet.getSheetName(), 
-				0, 0);  // 第一行
+				0, 0, CELL_STYLE_TITLE);  // 第一行
 		
-		this.write(NAME, 1, 0);  // 第二行第一列
-		this.write(WEEK, 1, 1);  // 第二行第二列
-		this.write(DAY, 1, 2);  // 第二行第三列
+		this.write(NAME, 1, 0, CELL_STYLE_CENTER);  // 第二行第一列
+		this.write(WEEK, 1, 1, CELL_STYLE_CENTER);  // 第二行第二列
+		this.write(DAY, 2, 1, CELL_STYLE_CENTER);  // 第三行第二列
 		
 		// 写入最后四列的内容:注意竖直排列
 		this.setVertical(1, 2 + days);
-		this.write(PREDICT_DAYS, 1, 2 + days);
+		this.write(PREDICT_DAYS, 1, 2 + days, CELL_STYLE_CENTER_VERTICAL);
 		this.setVertical(1, 2 + days + 1);
-		this.write(REAL_DAYS, 1, 2 + days + 1);
+		this.write(REAL_DAYS, 1, 2 + days + 1, CELL_STYLE_CENTER_VERTICAL);
 		this.setVertical(1, 2 + days + 2);
-		this.write(DUTY_TIME, 1, 2 + days + 2);
+		this.write(DUTY_TIME, 1, 2 + days + 2, CELL_STYLE_CENTER_VERTICAL);
 		this.setVertical(1, 2 + days + 3);
-		this.write(LATE_EARLY, 1, 2 + days + 3);
+		this.write(LATE_EARLY, 1, 2 + days + 3, CELL_STYLE_CENTER_VERTICAL);
 		
-		this.write(DAYS, 2, 2 + days);
-		this.write(DAYS, 2, 2 + days + 1);
-		this.write(TIME, 2, 2 + days + 2);
-		this.write(COUNTS, 2, 2 + days + 3);
+		this.write(DAYS, 2, 2 + days, CELL_STYLE_CENTER);
+		this.write(DAYS, 2, 2 + days + 1, CELL_STYLE_CENTER);
+		this.write(TIME, 2, 2 + days + 2, CELL_STYLE_CENTER);
+		this.write(COUNTS, 2, 2 + days + 3, CELL_STYLE_CENTER);
 		
 		// 写入中间列的星期和日：星期在上，日在下
 		for (int i = 1; i <= days; i ++) {
-			this.write(this.getWeek(i), 1,  2 + i - 1);
-			this.write(String.valueOf(i), 2, 2 + i - 1);
+			this.write(this.getWeek(i), 1,  2 + i - 1, CELL_STYLE_CENTER);
+			this.write(String.valueOf(i), 2, 2 + i - 1, CELL_STYLE_CENTER);
 		}
 		
-	}
-	
-	/**
-	 * 设置单元格内容水平居中
-	 * @param rowNum
-	 * @param collumnNum
-	 */
-	private void setAlignmentCenter (int rowNum, int collumnNum) {
-		// 获取行
-		this.row = this.sheet.getRow(rowNum) == null ? 
-				this.sheet.createRow(rowNum) : this.sheet.getRow(rowNum);
-		// 获取单元格
-		this.cell = this.row.getCell(collumnNum) == null ?
-				this.row.createCell(collumnNum) : this.row.createCell(collumnNum);
-		this.cellStyle = this.book.createCellStyle();
-		this.cellStyle.setAlignment(HorizontalAlignment.CENTER);
-		this.setStyle(rowNum, collumnNum);
 	}
 	
 	/**
@@ -332,6 +400,12 @@ public class WorkBookUtil {
 		}
 		
 		return week;
+	}
+	
+	private HSSFCellStyle getCellStyle (int rowNum, int collumnNum) {
+		HSSFCell cell = this.getCell(rowNum, collumnNum);
+		HSSFCellStyle cellStyle = cell.getCellStyle();
+		return cellStyle;
 	}
 	
 }
