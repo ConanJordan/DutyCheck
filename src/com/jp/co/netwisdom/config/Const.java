@@ -42,7 +42,7 @@ public final class Const {
 			+ "ON E.CARDNO = N.CARDNO "  // 连接条件
 			+ "WHERE E.CDT >= DATE(?) "  // 打卡日期大于等于目标月第一天
 			+ "AND E.CDT <= DATE(?) "  // 打卡日期小于等于目标月最后一天
-			+ "AND E.CARDNO NOT IN (?) ";  // 不在检索范围内的卡号
+			+ "AND E.CARDNO NOT IN ('222442','14562489') ";  // 不在检索范围内的卡号
 	
 	
 	public static final String PLEASE_INPUT_YEAR_MONTH = ""
