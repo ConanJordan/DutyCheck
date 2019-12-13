@@ -10,6 +10,26 @@ import com.jp.co.netwisdom.config.Const;
 public class CalendarUtil {
 	
 	/**
+	 * 标准上班时间
+	 */
+	public static Calendar STANDARD_START_CAL;
+	
+	/**
+	 * 标准下班时间
+	 */
+	public static Calendar STANDARD_END_CAL;
+	
+	static {
+		STANDARD_START_CAL = Calendar.getInstance();
+		STANDARD_START_CAL.set(Calendar.HOUR, 9);
+		STANDARD_START_CAL.set(Calendar.MINUTE, 30);
+		
+		STANDARD_END_CAL = Calendar.getInstance();
+		STANDARD_END_CAL.set(Calendar.HOUR, 18);
+		STANDARD_END_CAL.set(Calendar.MINUTE, 30);
+	}
+	
+	/**
 	 * 获取给定年月的天数
 	 * @param year
 	 * @param month
@@ -107,33 +127,49 @@ public class CalendarUtil {
 		// 计算相差的小时数
 		double hours = seconds / 60 / 60;
 		
-		if (startHour < 12 && hours > 1) {  // 12点之前来且相差的小时数大于1
-			hours = hours - 1;  // 减去午餐时间
-		}
+		hours = hours - 1;  // 减去午餐时间
 		
-		return hours;
+		return hours > 0 ? hours : 0;
 	}
 	
 	/**
 	 * 迟到判断
+	 * 9:30以后到场算迟到
 	 * @param time
 	 * @return
 	 */
 	public static boolean isLate (String time) {
 		// 获得小时数
 		int hour = Integer.parseInt(time.substring(0, 2));
-		return hour >= 10;  // 10点以后到算迟到
+		// 获得分钟数
+		int minute = Integer.parseInt(time.substring(3, 5));
+		
+		// 目标Calendar
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.HOUR, hour);
+		calendar.set(Calendar.MINUTE, minute);
+		
+		return calendar.after(STANDARD_START_CAL);
 	}
 	
 	/**
 	 * 早退判断
+	 * 18:30之前下班算早退
 	 * @param time
 	 * @return
 	 */
 	public static boolean isEarly (String time) {
 		// 获得小时数
 		int hour = Integer.parseInt(time.substring(0, 2));
-		return hour < 18;  // 18点以前离开算早退
+		// 获得分钟数
+		int minute = Integer.parseInt(time.substring(3, 5));
+		
+		// 目标Calendar
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.HOUR, hour);
+		calendar.set(Calendar.MINUTE, minute);
+		
+		return calendar.before(STANDARD_END_CAL);
 	}
 	
 	/**

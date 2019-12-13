@@ -28,7 +28,7 @@ public class DutyDto {
 	/**
 	 * 是否缺席
 	 */
-	private boolean isAbsent = true;
+	private boolean isAbsent;
 	
 	/**
 	 * 是否异常

@@ -1,5 +1,6 @@
 package com.jp.co.netwisdom.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,12 +21,12 @@ public class OutputResultDto {
 	/**
 	 * 当天考勤信息集合
 	 */
-	private List<DutyDto> duties;
+	private List<DutyDto> duties = new ArrayList<DutyDto>();
 	
 	/**
 	 * 当月考勤统计集合
 	 */
-	private DutyStatisDto dutyStatis;
+	private DutyStatisDto dutyStatis = new DutyStatisDto();
 
 	public String getName() {
 		return name;
