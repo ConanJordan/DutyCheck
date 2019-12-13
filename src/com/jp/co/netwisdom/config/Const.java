@@ -4,7 +4,7 @@ import com.jp.co.netwisdom.util.ReadUtil;
 
 public final class Const {
 	public static final String ADMINIST = "管理部";
-	public static final String BUSINESS = "营业";
+	public static final String BUSINESS = "营业部";
 	public static final String TRAIN = "培训部";
 	public static final String STUDY = "学习部";
 	public static final String MALE = "男";
@@ -25,6 +25,25 @@ public final class Const {
 	public static final String SQL_SELECT_NOTE_TABLE = ""
 			+ "SELECT CARDNO, CTI, CDT "
 			+ "FROM NOTETABLE ";
+
+	/**
+	 * SQL语句：检索考勤记录
+	 */
+	public static final String SQL_QUERY_DUTY_NOTE_INFO = ""
+			+ "SELECT "
+			+ "E.CARDNO AS CARDNO, "  // 卡号
+			+ "E.NAME AS NAME, "  // 姓名
+			+ "E.DEPT AS DEPT, "  // 部门
+			+ "N.CDT AS CDT, "  // 打卡日期
+			+ "N.CTI AS CTI "  // 打卡时刻
+			+ "FROM EMPLOYEE E "  // Employee表
+			+ "LEFT JOIN "  // 左连接
+			+ "NOTETABLE N "  // NoteTable表
+			+ "ON E.CARDNO = N.CARDNO "  // 连接条件
+			+ "WHERE E.CDT >= DATE(?) "  // 打卡日期大于等于目标月第一天
+			+ "AND E.CDT <= DATE(?) "  // 打卡日期小于等于目标月最后一天
+			+ "AND E.CARDNO NOT IN (?) ";  // 不在检索范围内的卡号
+	
 	
 	public static final String PLEASE_INPUT_YEAR_MONTH = ""
 			+ "请输入想要查询的年月。格式为YYYYMM.";
